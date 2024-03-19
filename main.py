@@ -112,5 +112,5 @@ def insert_val(nama_db, nama_tabel):
 
 if __name__ == "__main__":
     nama_db = "project_0.db"
-    nama_tabel = "sawah"
+    nama_tabel = "catatan"
     insert_val(nama_db,nama_tabel)
