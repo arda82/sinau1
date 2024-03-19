@@ -68,7 +68,7 @@ def insert_val(nama_db, nama_tabel):
 
             elif pilihan == "2":
                 # edit nilai dari sebuah kolom
-                edit_val.update_data(nama_db,nama_tabel)
+                update.update_data(nama_db,nama_tabel)
 
             elif pilihan == "3":
                 # Meminta ID nilai yang ingin dihapus
