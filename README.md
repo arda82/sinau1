@@ -1,4 +1,4 @@
-#*sebuah alat pencatatan berbasis sqlite3*#
+**sebuah alat pencatatan berbasis sqlite3**
 
 masukan semua file dalam satu folder.
 
