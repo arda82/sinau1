@@ -2,6 +2,7 @@ import sqlite3
 import view_data
 import create_tab
 import update
+import hitung
 
 def insert_val(nama_db, nama_tabel):
     """
@@ -19,6 +20,8 @@ def insert_val(nama_db, nama_tabel):
     create_tab.buat_tabel(nama_db,nama_tabel)
 
     while True:
+        print("")
+        print("==============")
         # membuat koneksi
         taut = sqlite3.connect(nama_db)
         cursor = taut.cursor()
@@ -35,11 +38,14 @@ def insert_val(nama_db, nama_tabel):
                 print(f"{kolom_nama[i]}: {row[i]}")
             print()
         # Menampilkan menu pilihan
+        print("")
+        print("_____________________")
         print("Pilihan:")
         print("1. Masukkan nilai baru")
         print("2. Edit data")
         print("3. Hapus data")
-        print("4. Keluar")
+        print("4. hitung umur")
+        print("5. Keluar")
 
         # Meminta pilihan dari pengguna
         pilihan = input("Masukkan pilihan: ")
@@ -91,14 +97,33 @@ def insert_val(nama_db, nama_tabel):
 
                     # Menampilkan pesan konfirmasi
                     print("Data berhasil dihapus")
-
+                    
+                
+              
             elif pilihan == "4":
+                #input tanggal mulai
+                mulai = input("masukan tanggal dengan format(tgl,bln,thn): ")
+              
+              #hitung umur
+                try :
+                    umur = hitung.hitung(mulai)
+                except ValueError as e:
+                    print(e)
+                else:
+                    print("")
+                    print(f"umur tanaman {umur} hari")
+                    print("___________")
+                    print("")
+                
+
+            elif pilihan == "5":
                 # Pilihan lain
                 break
 
             else:
                 # Pilihan tidak valid
-                print("Pilihan tidak valid. Masukkan angka 1-4.")
+                print("")
+                print("Pilihan tidak valid. Masukkan angka 1-5.")
 
         except sqlite3.Error as e:
             # Menangani kesalahan dan menampilkan pesan error
@@ -111,6 +136,6 @@ def insert_val(nama_db, nama_tabel):
                 taut.close()
 
 if __name__ == "__main__":
-    nama_db = "project_0.db"
-    nama_tabel = "catatan"
+    nama_db = "sawah.db"
+    nama_tabel = "sawah"
     insert_val(nama_db,nama_tabel)
