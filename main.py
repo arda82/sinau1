@@ -1,4 +1,4 @@
-import sqlite3
+9import sqlite3
 import view_data
 import create_tab
 import update
@@ -136,6 +136,6 @@ def insert_val(nama_db, nama_tabel):
                 taut.close()
 
 if __name__ == "__main__":
-    nama_db = "sawah.db"
-    nama_tabel = "sawah"
+    nama_db = "project.db"
+    nama_tabel = "catatan"
     insert_val(nama_db,nama_tabel)
