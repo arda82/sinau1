@@ -136,6 +136,6 @@ def insert_val(nama_db, nama_tabel):
                 taut.close()
 
 if __name__ == "__main__":
-    nama_db = "project.db"
+    nama_db = "project_0.db"
     nama_tabel = "catatan"
     insert_val(nama_db,nama_tabel)
