@@ -28,13 +28,3 @@ def hitung(mulai):
   return umur_hari.days
 
 
-# Input tanggal mulai
-#mulai = input("Masukkan tanggal mulai (format tgl,bln,thn): ")
-
-# Hitung umur
-#try:
-#  umur = hitung(mulai)
-#except ValueError as e:
-#  print(e)
-#else:
-#  print(f"Umur tanaman adalah {umur} hari")
