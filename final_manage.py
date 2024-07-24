@@ -1,4 +1,4 @@
-# manage_table.py
+# final_manage.py
 import os
 from utils import *
 
