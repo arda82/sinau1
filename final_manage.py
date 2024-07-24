@@ -4,7 +4,7 @@ from utils import *
 
 def main():
     # Define the database file path
-    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sawah.db')
+    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'experiment.db')
     
     selected_table = None
 
