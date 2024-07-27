@@ -3,23 +3,41 @@ import sqlite3
 from datetime import date
 from table import Table
 
-def hitung(mulai):
+def count_days():
     """
-    Program untuk menghitung umur dalam hari.
-    Args:
-        mulai: Tanggal mulai hitung dengan format tgl,bln,thn
-    Returns:
-        Jumlah hari dari mulai hitungan sampai hari ini.
+    Calculates the number of days between two user-provided dates.
+    Handles potential input errors and provides informative messages.
     """
-    try:
-        tanggal, bulan, tahun = mulai.split(",")
-        start_date = date(int(tahun), int(bulan), int(tanggal))
-    except ValueError:
-        raise ValueError("Format tanggal tidak valid (harus tgl,bln,thn)")
 
     today = date.today()
-    age_days = today - start_date
-    return age_days.days
+    print(f"Today: {today.strftime('%d, %m, %Y')}")
+
+    while True:
+        try:
+            start_input = input("Enter start date (DD,MM,YYYY): ")
+            day, month, year = map(int, start_input.split(','))
+            start_date = date(year, month, day)  
+
+            end_input = input("Enter end date (DD,MM,YYYY): ")
+            if end_input.strip() == "":
+                end_date = today
+            else:
+                day, month, year = map(int, end_input.split(','))
+                end_date = date(year, month, day) 
+
+            if start_date > end_date:
+                print("Start date cannot be after end date. Please try again.")
+                continue
+
+            break
+
+        except ValueError:
+            print("Invalid date format. Please enter dates in DD,MM,YYYY format separated by commas.")
+
+    difference = end_date - start_date
+    days = difference.days
+
+    print(f"There are {days} days")
 
 def get_all_tables(data_file):
     """

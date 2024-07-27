@@ -1,10 +1,10 @@
-# final_manage.py
+# manage_table.py
 import os
 from utils import *
 
 def main():
     # Define the database file path
-    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'experiment.dat')
+    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sawah.dat')
     
     selected_table = None
 
@@ -57,7 +57,7 @@ def main():
                 print("1. View Table Contents")
                 print("2. Insert Data into Table")
                 print("3. Edit Table Data")
-                print("4. Hitung Umur")
+                print("4. Count days")
                 print("5. Back to Main Menu")
 
                 sub_choice = input("Enter your choice (1-5): ")
@@ -73,14 +73,8 @@ def main():
                     edit_table_data(selected_table)
                 elif sub_choice == '4':
                     print()
-                    # Input tanggal mulai
-                    mulai = input("Masukkan tanggal dengan format (tgl,bln,thn): ")
-                    # Hitung umur
-                    try:
-                        umur = hitung(mulai)
-                        print(f"Umur = {umur} hari")
-                    except ValueError as e:
-                        print(e)
+                    count_days()
+                
                 elif sub_choice == '5':
                     break
                 else:
