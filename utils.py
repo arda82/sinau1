@@ -1,19 +1,15 @@
-# utils.py
+#utils.py
 import sqlite3
 from datetime import date
 from table import Table
 
 def count_days():
-    """
-    Calculates the number of days between two user-provided dates.
-    Handles potential input errors and provides informative messages.
-    """
-
     today = date.today()
     print(f"Today: {today.strftime('%d, %m, %Y')}")
 
     while True:
         try:
+            print()
             start_input = input("Enter start date (DD,MM,YYYY): ")
             day, month, year = map(int, start_input.split(','))
             start_date = date(year, month, day)  
@@ -40,13 +36,6 @@ def count_days():
     print(f"There are {days} days")
 
 def get_all_tables(data_file):
-    """
-    Fetches all table names from the database, excluding those starting with 'sqlite' and 'android'.
-    Args:
-        data_file: The path to the database file.
-    Returns:
-        A list of table names.
-    """
     try:
         with sqlite3.connect(data_file) as conn:
             cursor = conn.cursor()
@@ -58,23 +47,10 @@ def get_all_tables(data_file):
         return []
 
 def validate_table_name(table_name):
-    """
-    Validates the table name to ensure it is a valid SQL identifier.
-    Args:
-        table_name: The name of the table to validate.
-    """
     if not table_name.isidentifier():
         raise ValueError("Invalid table name. Please enter a valid identifier.")
 
 def create_table_with_columns(data_file, table_name, columns, column_types):
-    """
-    Creates a table with the specified name, columns, and data types.
-    Args:
-        data_file: The path to the database file.
-        table_name: The name of the table to create.
-        columns: A list of column names.
-        column_types: A list of column data types.
-    """
     try:
         column_definitions = [f"{col.strip()} {type_.strip()}" for col, type_ in zip(columns, column_types)]
         table = Table(data_file, table_name, column_definitions)
@@ -83,12 +59,6 @@ def create_table_with_columns(data_file, table_name, columns, column_types):
         print(f"Failed to create table: {e}")
 
 def delete_table(data_file, table_name):
-    """
-    Deletes the specified table.
-    Args:
-        data_file: The path to the database file.
-        table_name: The name of the table to delete.
-    """
     try:
         table = Table(data_file, table_name)
         table.drop()
@@ -97,14 +67,6 @@ def delete_table(data_file, table_name):
         print(f"Failed to delete table: {e}")
 
 def select_table(data_file, tables):
-    """
-    Selects the specified table and returns the Table object.
-    Args:
-        data_file: The path to the database file.
-        tables: A list of existing table names.
-    Returns:
-        The Table object if the table exists, None otherwise.
-    """
     table_name = input("Enter name of the table to select: ")
     if table_name not in tables:
         print(f"Table '{table_name}' does not exist. Please select a valid table.")
@@ -119,11 +81,6 @@ def select_table(data_file, tables):
         return None
 
 def view_table_contents(table):
-    """
-    Displays the contents of the specified table.
-    Args:
-        table: The Table object.
-    """
     if table is None:
         print("No table selected. Please select a table first.")
         return
@@ -144,11 +101,6 @@ def view_table_contents(table):
         print(f"Failed to display table contents: {e}")
 
 def insert_data_into_table(table):
-    """
-    Inserts data into the specified table.
-    Args:
-        table: The Table object.
-    """
     if table is None:
         print("No table selected. Please select a table first.")
         return
@@ -158,10 +110,13 @@ def insert_data_into_table(table):
         column_names = [description[0] for description in cursor.description]
         cursor.close()
 
-        data = input(f"Enter data values (comma separated) for columns ({', '.join(column_names)}): ")
-        data_values = [value.strip() for value in data.split(',')]
-        if len(data_values) != len(column_names):
-            raise ValueError("Invalid number of data values. Please provide values for all columns.")
+        data_values = []
+        for column_name in column_names:
+            value = input(f"Enter value for column '{column_name}' (leave empty for NULL): ")
+            if value == "":
+                data_values.append("")
+            else:
+                data_values.append(value)
 
         table.insert(*data_values)
         print("Data inserted into table successfully.")
@@ -169,11 +124,6 @@ def insert_data_into_table(table):
         print(f"Failed to insert data into table: {e}")
 
 def edit_table_data(table):
-    """
-    Edits data in the specified table.
-    Args:
-        table: The Table object.
-    """
     if table is None:
         print("No table selected. Please select a table first.")
         return
@@ -184,25 +134,38 @@ def edit_table_data(table):
         results = cursor.fetchall()
         cursor.close()
 
+        if not results:
+            print("The table is empty. No data to edit.")
+            return
+
         for idx, row in enumerate(results):
             print(f"{idx + 1}: {row}")
 
-        row_number = int(input("Enter the row number to edit (starting from 1): "))
-        if row_number <= 0 or row_number > len(results):
-            raise ValueError("Invalid row number. Please enter a valid row number.")
+        while True:
+            try:
+                row_number = int(input("Enter the row number to edit (starting from 1): "))
+                if row_number <= 0 or row_number > len(results):
+                    raise ValueError("Invalid row number. Please enter a valid row number.")
+                break
+            except ValueError as ve:
+                print(ve)
 
         row_data = list(results[row_number - 1])  # Adjust for 0-based indexing
-        row_id = row_data[0]  # Assuming the first column is the primary key
 
+        new_values = []
         for i, (column_name, value) in enumerate(zip(column_names, row_data)):
             new_value = input(f"Enter new value for column '{column_name}' (current value: '{value}'): ")
             if new_value:  # Only update if the user entered a new value
-                row_data[i] = new_value
+                new_values.append(new_value)
+            else:
+                new_values.append(value)
 
-        set_args = {col: val for col, val in zip(column_names[1:], row_data[1:])}  # Exclude primary key from set_args
-        where_args = {column_names[0]: row_id}
+        set_args = {col: val for col, val in zip(column_names, new_values)}
+        where_args = {column_names[0]: row_data[0]}  # Primary key is used in the WHERE clause
 
         table.update(set_args, **where_args)
         print("Row data updated successfully!")
+    except sqlite3.Error as sql_e:
+        print(f"SQLite error occurred: {sql_e}")
     except Exception as e:
         print(f"Failed to edit table data: {e}")
