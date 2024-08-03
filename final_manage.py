@@ -3,7 +3,7 @@ import os
 from utils import *
 
 def main():
-    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sawah.dat')
+    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_data.dat')
     
     selected_table = None
 
