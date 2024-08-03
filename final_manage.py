@@ -3,7 +3,7 @@ import os
 from utils import *
 
 def main():
-    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'my_data.dat')
+    db_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'sawah.dat')
     
     selected_table = None
 
@@ -52,32 +52,37 @@ def main():
             selected_table = select_table(db_path, tables)
 
             while selected_table:
+                view_table_contents(selected_table) 
+                print()
                 print("\nTable Management Menu:")
-                print("1. View Table Contents")
-                print("2. Insert Data into Table")
-                print("3. Edit Table Data")
-                print("4. Count days")
-                print("5. Back to Main Menu")
+                print("1. Insert Data into Table")
+                print("2. Edit Table Data")
+                print("3. Add Column to Table")
+                print("4. Delete Column from Table")
+                print("5. Count days")
+                print("6. Back to Main Menu")
 
-                sub_choice = input("Enter your choice (1-5): ")
+                sub_choice = input("Enter your choice (1-6): ")
 
                 if sub_choice == '1':
                     print()
-                    view_table_contents(selected_table)
+                    insert_data_into_table(selected_table)
                 elif sub_choice == '2':
                     print()
-                    insert_data_into_table(selected_table)
+                    edit_table_data(selected_table)
                 elif sub_choice == '3':
                     print()
-                    edit_table_data(selected_table)
+                    add_column_to_table(selected_table)
                 elif sub_choice == '4':
                     print()
-                    count_days()
-                
+                    delete_column_from_table(selected_table)
                 elif sub_choice == '5':
+                    print()
+                    count_days()
+                elif sub_choice == '6':
                     break
                 else:
-                    print("Invalid choice. Please enter a number between 1 and 5.")
+                    print("Invalid choice. Please enter a number between 1 and 6.")
 
         elif choice == '4':
             print("Exiting SQLite Table Management Tool.")

@@ -169,3 +169,69 @@ def edit_table_data(table):
         print(f"SQLite error occurred: {sql_e}")
     except Exception as e:
         print(f"Failed to edit table data: {e}")
+        
+def add_column_to_table(table):
+    if table is None:
+        print("No table selected. Please select a table first.")
+        return
+
+    try:
+        column_name = input("Enter name for the new column: ")
+        column_type = input("Enter data type for the new column (e.g., TEXT, INTEGER): ")
+        table_name = table.table_name
+
+        alter_query = f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}"
+        table.write(alter_query)
+        print(f"Column '{column_name}' added successfully to table '{table_name}'!")
+    except Exception as e:
+        print(f"Failed to add column to table: {e}")
+        
+def delete_column_from_table(table):
+    if table is None:
+        print("No table selected. Please select a table first.")
+        return
+
+    try:
+        # Fetch the current columns
+        cursor = table.select_all()
+        column_names = [description[0] for description in cursor.description]
+        cursor.close()
+
+        print("Available columns in the table:")
+        for col in column_names:
+            print(f" - {col}")
+
+        column_name = input("Enter the name of the column to delete: ")
+
+        if column_name not in column_names:
+            print(f"Column '{column_name}' does not exist in the table '{table.table_name}'.")
+            return
+
+        table_name = table.table_name
+
+        # Prepare new columns excluding the column to be deleted
+        new_columns = [col for col in column_names if col != column_name]
+
+        # Create a temporary table with the new columns
+        new_table_name = f"{table_name}_new"
+        column_definitions = [f"{col} {table.db.execute(f'PRAGMA table_info({table_name})').fetchall()[column_names.index(col)][2]}" for col in new_columns]
+        create_temp_table_query = f"CREATE TABLE {new_table_name} ({', '.join(column_definitions)})"
+        table.write(create_temp_table_query)
+
+        # Copy data to the temporary table
+        columns_str = ", ".join(new_columns)
+        copy_data_query = f"INSERT INTO {new_table_name} ({columns_str}) SELECT {columns_str} FROM {table_name}"
+        table.write(copy_data_query)
+
+        # Drop the old table
+        table.drop_table(table_name)
+
+        # Rename the temporary table to the original table name
+        rename_table_query = f"ALTER TABLE {new_table_name} RENAME TO {table_name}"
+        table.write(rename_table_query)
+
+        print(f"Column '{column_name}' deleted successfully from table '{table_name}'!")
+    except sqlite3.Error as sql_e:
+        print(f"SQLite error occurred: {sql_e}")
+    except Exception as e:
+        print(f"Failed to delete column from table: {e}")
